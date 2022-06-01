@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Form down- and upload</title>
+  </head>
+  <body>
+    <h1>Employee manager form management</h1>
+    <h2>Download registration form</h2>
+    <a href="/registration.pdf" target="_blank">Download registration form</a>
+    <h2>Upload registration form</h2>
+    <form method="POST" enctype="multipart/form-data" action="/upload">
+			File to upload:<br>
+			<input type="file" name="file" /><br>
+			<input type="submit" value="Upload" />
+		</form>
+  </body>
+</html>
