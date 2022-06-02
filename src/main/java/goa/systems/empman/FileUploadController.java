@@ -81,7 +81,7 @@ public class FileUploadController {
 	public ResponseEntity<String> confirmed(HttpServletRequest request) {
 
 		String template = InputOutput
-				.readString(FileUploadController.class.getResourceAsStream("/static/confirmed.html"));
+				.readString(FileUploadController.class.getResourceAsStream("/templates/confirmed.html"));
 
 		String[] fields = request.getParameter("fieldlist").split(",");
 		Map<String, String> content = new HashMap<>();
