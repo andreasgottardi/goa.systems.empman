@@ -3,7 +3,9 @@ package goa.systems.empman;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -103,6 +105,15 @@ public class MainEndpointController {
 	public FileSystemResource getFile(HttpServletResponse response) {
 		response.setHeader("Content-Disposition", "attachment; filename=registration.pdf");
 		return new FileSystemResource(new File(SysProps.getInstance().getPdfdir(), "registration.pdf"));
+	}
+
+	@GetMapping(value = "/forms", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<String> getForms() {
+		List<String> names = new ArrayList<>();
+		for (File f : SysProps.getInstance().getPdfdir().listFiles()) {
+			names.add(f.getName());
+		}
+		return ResponseEntity.ok().body(new Gson().toJson(names));
 	}
 
 	private String toXml(Map<String, String> data) {
