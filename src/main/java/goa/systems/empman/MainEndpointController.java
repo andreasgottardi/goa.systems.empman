@@ -1,5 +1,6 @@
 package goa.systems.empman;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.HashMap;
@@ -7,6 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -20,11 +22,13 @@ import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
 import org.apache.pdfbox.pdmodel.interactive.form.PDField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.HtmlUtils;
@@ -37,10 +41,10 @@ import com.google.gson.GsonBuilder;
 import goa.systems.commons.io.InputOutput;
 import goa.systems.commons.xml.XmlFramework;
 
-@Controller
-public class FileUploadController {
+@RestController
+public class MainEndpointController {
 
-	private static final Logger logger = LoggerFactory.getLogger(FileUploadController.class);
+	private static final Logger logger = LoggerFactory.getLogger(MainEndpointController.class);
 
 	@PostMapping(value = "/upload", produces = MediaType.TEXT_HTML_VALUE)
 	public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file,
@@ -81,7 +85,7 @@ public class FileUploadController {
 	public ResponseEntity<String> confirmed(HttpServletRequest request) {
 
 		String template = InputOutput
-				.readString(FileUploadController.class.getResourceAsStream("/templates/confirmed.html"));
+				.readString(MainEndpointController.class.getResourceAsStream("/templates/confirmed.html"));
 
 		String[] fields = request.getParameter("fieldlist").split(",");
 		Map<String, String> content = new HashMap<>();
@@ -93,6 +97,12 @@ public class FileUploadController {
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 		String c = String.format(template, gson.toJson(content), HtmlUtils.htmlEscape(toXml(content)), toSql(content));
 		return ResponseEntity.ok().body(c);
+	}
+
+	@GetMapping(value = "/registration", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+	public FileSystemResource getFile(HttpServletResponse response) {
+		response.setHeader("Content-Disposition", "attachment; filename=registration.pdf");
+		return new FileSystemResource(new File(SysProps.getInstance().getPdfdir(), "registration.pdf"));
 	}
 
 	private String toXml(Map<String, String> data) {
