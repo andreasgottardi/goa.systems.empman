@@ -1,18 +1,21 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <title>Form down- and upload</title>
-    <link rel="stylesheet" href="style.css">
-  </head>
-  <body>
-    <h1>Employee manager form management</h1>
-    <h2>Download registration form</h2>
-    <a href="/registration" target="_blank">Download registration form</a>
-    <h2>Upload registration form</h2>
-    <form method="POST" enctype="multipart/form-data" action="/upload">
-			File to upload:<br>
-			<input type="file" name="file" /><br>
-			<input type="submit" value="Upload" />
-		</form>
-  </body>
+<head>
+<title>Form down- and upload</title>
+<link rel="stylesheet" href="style.css">
+<script src="/empman.js"></script>
+<script type="text/javascript">
+	window.onload = initData
+</script>
+</head>
+<body>
+	<h1>Employee manager form management</h1>
+	<h2>Available forms</h2>
+	<p id="formlist"></p>
+	<h2>Upload registration form</h2>
+	<form method="POST" enctype="multipart/form-data" action="/upload">
+		File to upload:<br> <input type="file" name="file" /><br> <input
+			type="submit" value="Upload" />
+	</form>
+</body>
 </html>

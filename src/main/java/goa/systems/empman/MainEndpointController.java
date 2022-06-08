@@ -28,6 +28,7 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,6 +43,7 @@ import com.google.gson.GsonBuilder;
 
 import goa.systems.commons.io.InputOutput;
 import goa.systems.commons.xml.XmlFramework;
+import goa.systems.empman.model.Form;
 
 @RestController
 public class MainEndpointController {
@@ -101,17 +103,29 @@ public class MainEndpointController {
 		return ResponseEntity.ok().body(c);
 	}
 
-	@GetMapping(value = "/registration", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-	public FileSystemResource getFile(HttpServletResponse response) {
-		response.setHeader("Content-Disposition", "attachment; filename=registration.pdf");
-		return new FileSystemResource(new File(SysProps.getInstance().getPdfdir(), "registration.pdf"));
+	@GetMapping(value = "/form/{id}/{format}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+	public FileSystemResource getFile(@PathVariable String id, @PathVariable String format,
+			HttpServletResponse response) {
+		response.setHeader("Content-Disposition", String.format("attachment; filename=%s.%s", id, format));
+		File directory = new File(SysProps.getInstance().getFormsdir(), id);
+		return new FileSystemResource(new File(directory, "." + format));
 	}
 
+	/**
+	 * 
+	 * @return JSON object with the available forms.
+	 */
 	@GetMapping(value = "/forms", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> getForms() {
-		List<String> names = new ArrayList<>();
-		for (File f : SysProps.getInstance().getPdfdir().listFiles()) {
-			names.add(f.getName());
+		List<Form> names = new ArrayList<>();
+		for (File f : SysProps.getInstance().getFormsdir().listFiles()) {
+
+			Form form = new Form();
+			form.setName(f.getName());
+			form.setPdf(new File(f, ".pdf").exists());
+			form.setOdt(new File(f, ".odt").exists());
+
+			names.add(form);
 		}
 		return ResponseEntity.ok().body(new Gson().toJson(names));
 	}

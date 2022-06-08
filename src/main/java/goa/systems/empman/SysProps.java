@@ -8,8 +8,7 @@ public class SysProps {
 
 	private File datadir;
 	private File appdatadir;
-	private File odtdir;
-	private File pdfdir;
+	private File formsdir;
 
 	private SysProps() {
 
@@ -38,20 +37,11 @@ public class SysProps {
 		this.appdatadir = appdatadir;
 	}
 
-	public File getOdtdir() {
-		return odtdir;
+	public File getFormsdir() {
+		return formsdir;
 	}
 
-	public void setOdtdir(File odtdir) {
-		this.odtdir = odtdir;
+	public void setFormsdir(File formsdir) {
+		this.formsdir = formsdir;
 	}
-
-	public File getPdfdir() {
-		return pdfdir;
-	}
-
-	public void setPdfdir(File pdfdir) {
-		this.pdfdir = pdfdir;
-	}
-
 }

@@ -24,16 +24,15 @@ class MyCommandLineRunner implements CommandLineRunner {
 		// Check data directory
 		sp.setDatadir(new File(System.getProperty("user.home"), ".goasys"));
 		sp.setAppdatadir(new File(sp.getDatadir(), "empman"));
-		sp.setOdtdir(new File(sp.getAppdatadir(), "odt"));
-		sp.setPdfdir(new File(sp.getAppdatadir(), "pdf"));
+		sp.setFormsdir(new File(sp.getAppdatadir(), "forms"));
 
 		createifnotexists(sp.getDatadir());
 		createifnotexists(sp.getAppdatadir());
-		if (createifnotexists(sp.getOdtdir())) {
-			copy("/odt/registration.odt", new File(sp.getOdtdir(), "registration.odt"));
-		}
-		if (createifnotexists(sp.getPdfdir())) {
-			copy("/pdf/registration.pdf", new File(sp.getPdfdir(), "registration.pdf"));
+		if (createifnotexists(sp.getFormsdir())) {
+			File registrationdir = new File(sp.getFormsdir(), "registration");
+			createifnotexists(registrationdir);
+			copy("/forms/registration.odt", new File(registrationdir, ".odt"));
+			copy("/forms/registration.pdf", new File(registrationdir, ".pdf"));
 		}
 
 	}
