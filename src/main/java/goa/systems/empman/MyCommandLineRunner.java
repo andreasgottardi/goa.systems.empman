@@ -3,13 +3,17 @@ package goa.systems.empman;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import com.google.gson.Gson;
+
 import goa.systems.commons.io.InputOutput;
+import goa.systems.empman.model.Metadata;
 
 @Component
 class MyCommandLineRunner implements CommandLineRunner {
@@ -29,10 +33,14 @@ class MyCommandLineRunner implements CommandLineRunner {
 		createifnotexists(sp.getDatadir());
 		createifnotexists(sp.getAppdatadir());
 		if (createifnotexists(sp.getFormsdir())) {
-			File registrationdir = new File(sp.getFormsdir(), "registration");
+			File registrationdir = new File(sp.getFormsdir(), UUID.randomUUID().toString());
 			createifnotexists(registrationdir);
 			copy("/forms/registration.odt", new File(registrationdir, ".odt"));
 			copy("/forms/registration.pdf", new File(registrationdir, ".pdf"));
+			Metadata md = new Metadata();
+			md.setName("registration");
+			md.setDescription("A employee registration form");
+			InputOutput.writeString(new Gson().toJson(md), new File(registrationdir, "metadata.json"));
 		}
 
 	}

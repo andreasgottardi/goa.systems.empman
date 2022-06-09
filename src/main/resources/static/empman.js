@@ -35,14 +35,15 @@ function handleforms() {
 			var line = document.createElement('div')
 			var name = document.createElement('div')
 			
-			name.innerText = obj[i].name
+			name.innerText = obj[i].metadata.name
 			name.style.float = "left"
 			name.style.width = "10em"
+			name.title = obj[i].metadata.description
 			line.appendChild(name)
 			
 			if(obj[i].pdf){
 				var pdf = document.createElement('a')
-				pdf.href = "/form/" + obj[i].name + "/pdf"
+				pdf.href = "/form/" + obj[i].uuid + "/pdf"
 				var pdficon = document.createElement('img')
 				pdficon.src = "pdf.png"
 				pdf.appendChild(pdficon)
@@ -51,7 +52,7 @@ function handleforms() {
 			
 			if(obj[i].odt){
 				var odt = document.createElement('a')
-				odt.href = "/form/" + obj[i].name + "/odt"
+				odt.href = "/form/" + obj[i].uuid + "/odt"
 				var odticon = document.createElement('img')
 				odticon.src = "odt.png"
 				odt.appendChild(odticon)

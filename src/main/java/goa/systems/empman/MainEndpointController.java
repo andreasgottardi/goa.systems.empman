@@ -1,6 +1,7 @@
 package goa.systems.empman;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -40,10 +41,14 @@ import org.w3c.dom.Element;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.stream.JsonReader;
 
 import goa.systems.commons.io.InputOutput;
 import goa.systems.commons.xml.XmlFramework;
 import goa.systems.empman.model.Form;
+import goa.systems.empman.model.Metadata;
 
 @RestController
 public class MainEndpointController {
@@ -103,11 +108,11 @@ public class MainEndpointController {
 		return ResponseEntity.ok().body(c);
 	}
 
-	@GetMapping(value = "/form/{id}/{format}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-	public FileSystemResource getFile(@PathVariable String id, @PathVariable String format,
+	@GetMapping(value = "/form/{uuid}/{format}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+	public FileSystemResource getFile(@PathVariable String uuid, @PathVariable String format,
 			HttpServletResponse response) {
-		response.setHeader("Content-Disposition", String.format("attachment; filename=%s.%s", id, format));
-		File directory = new File(SysProps.getInstance().getFormsdir(), id);
+		response.setHeader("Content-Disposition", String.format("attachment; filename=%s.%s", uuid, format));
+		File directory = new File(SysProps.getInstance().getFormsdir(), uuid);
 		return new FileSystemResource(new File(directory, "." + format));
 	}
 
@@ -121,9 +126,15 @@ public class MainEndpointController {
 		for (File f : SysProps.getInstance().getFormsdir().listFiles()) {
 
 			Form form = new Form();
-			form.setName(f.getName());
+			form.setUuid(f.getName());
 			form.setPdf(new File(f, ".pdf").exists());
 			form.setOdt(new File(f, ".odt").exists());
+
+			try (FileReader fr = new FileReader(new File(f, "metadata.json"))) {
+				form.setMetadata(new Gson().fromJson(new JsonReader(fr), Metadata.class));
+			} catch (JsonIOException | JsonSyntaxException | IOException e) {
+				logger.error("Error reading metadata.", e);
+			}
 
 			names.add(form);
 		}
