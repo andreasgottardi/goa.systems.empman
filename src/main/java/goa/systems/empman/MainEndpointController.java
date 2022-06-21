@@ -66,7 +66,7 @@ public class MainEndpointController {
 			StringBuilder page = new StringBuilder();
 			StringBuilder fields = new StringBuilder();
 			page.append(
-					"<html><title>Welcome</title><body><p>Is this information correct?</p><form method=\"POST\" action=\"/confirmed\">");
+					"<!DOCTYPE html><html><title>Welcome</title><body><p>Is this information correct?</p><form method=\"POST\" action=\"/confirmed\">");
 
 			for (PDField field : aform.getFields()) {
 				page.append(field.getPartialName());
@@ -77,9 +77,7 @@ public class MainEndpointController {
 			}
 			page.append(String.format("<input name=\"fieldlist\" type=\"hidden\" value=\"%s\">",
 					fields.toString().replaceAll(".$", "")));
-			page.append("<input type=\"submit\" value=\"Yes\">");
-			page.append("</form></body></html>");
-
+			page.append("<input type=\"submit\" value=\"Yes\"></form></body></html>");
 			pddoc.close();
 
 			return ResponseEntity.ok().body(page.toString());
